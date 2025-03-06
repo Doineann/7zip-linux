@@ -6,12 +6,14 @@ set -e
 GITHUB_USER="ip7z"
 GITHUB_REPO="7zip"
 ARTIFACT_PATTERN="linux-x64"
+
 INSTALL_DIR="$(cd "$(dirname "$0")" && pwd)/7zip"  # Install directory is ./7zip relative to the script
+
 BIN_SYMLINK_7ZZ="/usr/local/bin/7zz"
 BIN_SYMLINK_7ZZS="/usr/local/bin/7zzs"
 BIN_SYMLINK_7Z="/usr/local/bin/7z"
 
-# Step 1: Fetch the latest artifact information
+# Fetch the latest artifact information
 echo "Fetching the latest 7zip artifact details..."
 ARTIFACT_FILENAME=$(./generic/github-fetch-latest-artifact.sh "$GITHUB_USER" "$GITHUB_REPO" "$ARTIFACT_PATTERN" --show-filename)
 ARTIFACT_URL=$(./generic/github-fetch-latest-artifact.sh "$GITHUB_USER" "$GITHUB_REPO" "$ARTIFACT_PATTERN" --show-url)
@@ -24,7 +26,7 @@ fi
 
 echo "Latest version: $ARTIFACT_TAG ($ARTIFACT_FILENAME)"
 
-# Step 2: Check if the current version is already installed
+# Check if the current version is already installed
 if [[ -f "$INSTALL_DIR/version.txt" ]]; then
   CURRENT_VERSION=$(<"$INSTALL_DIR/version.txt")
   CURRENT_VERSION=$(echo "$CURRENT_VERSION" | xargs)  # Trim whitespace
@@ -34,18 +36,23 @@ if [[ -f "$INSTALL_DIR/version.txt" ]]; then
   fi
 fi
 
-# Step 3: Download and extract the artifact
+# Removing old version
+if [[ -d "$INSTALL_DIR" ]]; then
+  echo "Removing old version..."
+  rm -rf "$INSTALL_DIR"
+fi
+
+# Download and extract the artifact
 echo "Downloading 7zip from $ARTIFACT_URL..."
 ./generic/github-fetch-latest-artifact.sh "$GITHUB_USER" "$GITHUB_REPO" "$ARTIFACT_PATTERN" --download
 
 echo "Installing 7zip..."
-rm -rf "$INSTALL_DIR"
 mkdir -p "$INSTALL_DIR"
 tar -xf "$ARTIFACT_FILENAME" -C "$INSTALL_DIR"
 echo "$ARTIFACT_TAG" > "$INSTALL_DIR/version.txt"
 rm -f "$ARTIFACT_FILENAME"
 
-# Step 4: Create symbolic links for 7zz and 7zzs
+# Create symbolic links for 7zz and 7zzs
 read -p "Do you want to create symbolic links for 7zz and 7zzs in /usr/local/bin? (y/n): " CONFIRM
 if [[ "$CONFIRM" == "y" || "$CONFIRM" == "Y" ]]; then
   echo "Creating symbolic links..."
@@ -56,7 +63,7 @@ else
   echo "Symbolic link creation for 7zz and 7zzs skipped."
 fi
 
-# Step 5: Ask to create a symbolic link for 7z pointing to 7zz
+# Ask to create a symbolic link for 7z pointing to 7zz
 read -p "Do you also want to create a 7z symlink pointing to 7zz? (y/n): " CONFIRM
 if [[ "$CONFIRM" == "y" || "$CONFIRM" == "Y" ]]; then
   echo "Creating 7z symlink pointing to 7zz..."
