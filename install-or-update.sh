@@ -44,7 +44,6 @@ if [[ -d 7zip ]]; then
 fi
 
 # Download and extract the artifact
-echo "Downloading 7zip from $ARTIFACT_URL..."
 ./generic/github-fetch-latest-artifact.sh "$GITHUB_USER" "$GITHUB_REPO" "$ARTIFACT_PATTERN" --download
 
 echo "Installing 7zip..."
