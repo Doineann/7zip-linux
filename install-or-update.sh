@@ -41,6 +41,9 @@ fi
 if [[ -d 7zip ]]; then
   echo "Removing old version..."
   rm -rf 7zip
+  [ -e 7z ] && rm 7z
+  [ -e 7zz ] && rm 7zz
+  [ -e 7zzs ] && rm 7zzs
 fi
 
 # Download and extract the artifact
