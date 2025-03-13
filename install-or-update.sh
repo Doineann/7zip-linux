@@ -10,6 +10,7 @@ GITHUB_USER="ip7z"
 GITHUB_REPO="7zip"
 ARTIFACT_PATTERN="linux-x64"
 
+INSTALL_DIR="$(realpath $(dirname "$0"))"
 BIN_SYMLINK_7ZZ="/usr/local/bin/7zz"
 BIN_SYMLINK_7ZZS="/usr/local/bin/7zzs"
 BIN_SYMLINK_7Z="/usr/local/bin/7z"
@@ -59,8 +60,8 @@ rm -f "$ARTIFACT_FILENAME"
 read -p "Do you want to create symbolic links for 7zz and 7zzs in /usr/local/bin? (y/n): " CONFIRM
 if [[ "$CONFIRM" == "y" || "$CONFIRM" == "Y" ]]; then
   echo "Creating symbolic links..."
-  sudo ln -sf 7zip/7zz "$BIN_SYMLINK_7ZZ"
-  sudo ln -sf 7zip/7zzs "$BIN_SYMLINK_7ZZS"
+  sudo ln -sf "$INSTALL_DIR/7zip/7zz" "$BIN_SYMLINK_7ZZ"
+  sudo ln -sf "$INSTALL_DIR/7zip/7zzs" "$BIN_SYMLINK_7ZZS"
   echo "Symbolic links for 7zz and 7zzs created successfully."
 else
   echo "Symbolic link creation for 7zz and 7zzs skipped."
@@ -70,7 +71,7 @@ fi
 read -p "Do you also want to create a 7z symlink pointing to 7zz? (y/n): " CONFIRM
 if [[ "$CONFIRM" == "y" || "$CONFIRM" == "Y" ]]; then
   echo "Creating 7z symlink pointing to 7zz..."
-  sudo ln -sf 7zip/7zz "$BIN_SYMLINK_7Z"
+  sudo ln -sf "$INSTALL_DIR/7zip/7zz" "$BIN_SYMLINK_7Z"
   echo "7z symlink created successfully."
 else
   echo "7z symlink creation skipped."
